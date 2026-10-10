@@ -1,0 +1,225 @@
+// =====================================================================
+//  Tema Clássico — tela Ao vivo  (formato .jctema / rfw)
+//
+//  O visual da hybrid: preto, âmbar, IBM Plex Mono, temperatura gigante
+//  à esquerda, tempo à direita e 4 botões grandes embaixo. Cores
+//  próprias (não usa data.cores) para mostrar que o tema manda em tudo.
+// =====================================================================
+
+import core.widgets;
+import jc.pecas;
+
+widget Mono = Text(
+  text: args.texto,
+  maxLines: 1,
+  overflow: "ellipsis",
+  style: {fontFamily: "IBMPlexMono", fontWeight: "w700", fontSize: args.tamanho, letterSpacing: args.espaco, color: args.cor},
+);
+
+widget Tag = Container(
+  padding: [10.0, 6.0, 10.0, 6.0],
+  decoration: {
+    type: "box",
+    borderRadius: [{x: 6.0}],
+    border: [{
+      color: switch args.tipo { "ok": 0x733FB950, "destaque": 0x73F0A500, "aviso": 0x73F0A500, "erro": 0x73F85149, default: 0xFF2A2A2A },
+      width: 1.0,
+    }],
+    color: switch args.tipo { "ok": 0x143FB950, "destaque": 0x14F0A500, "aviso": 0x14F0A500, "erro": 0x14F85149, default: 0x00000000 },
+  },
+  child: Text(
+    text: args.texto,
+    style: {
+      fontFamily: "IBMPlexMono",
+      fontWeight: "w600",
+      fontSize: 12.0,
+      color: switch args.tipo { "ok": 0xFF3FB950, "destaque": 0xFFF0A500, "aviso": 0xFFF0A500, "erro": 0xFFF85149, default: 0xFF6E7681 },
+    },
+  ),
+);
+
+widget BotaoGrande = Expanded(
+  child: Toque(
+    onTap: args.onTap,
+    child: Container(
+      height: 64.0,
+      decoration: {
+        type: "box",
+        border: [{style: "none"}, {style: "none"}, {color: 0xFF2A2A2A, width: 1.0}, {style: "none"}],
+      },
+      child: Center(
+        child: Text(
+          text: args.rotulo,
+          style: {fontFamily: "IBMPlexMono", fontWeight: "w700", fontSize: 14.0, letterSpacing: 2.0, color: args.cor},
+        ),
+      ),
+    ),
+  ),
+);
+
+widget Esquerda = Padding(
+  padding: [22.0, 18.0, 22.0, 18.0],
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Mono(texto: data.st.etapaMaiusculo, tamanho: 12.0, espaco: 2.0,
+           cor: switch data.st.pausa { true: 0xFFF0A500, default: 0xFF6E7681 }),
+      Expanded(
+        child: Column(
+          mainAxisAlignment: "center",
+          crossAxisAlignment: "start",
+          children: [
+            FittedBox(
+              fit: "scaleDown",
+              alignment: {x: -1.0, y: 0.0},
+              child: Row(
+                mainAxisSize: "min",
+                crossAxisAlignment: "end",
+                children: [
+                  Text(
+                    text: data.st.temp,
+                    style: {
+                      fontFamily: "IBMPlexMono", fontWeight: "w700", fontSize: 104.0, letterSpacing: -4.0, height: 1.0,
+                      color: switch data.st.tempOk { true: 0xFFE6EDF3, default: 0xFFF85149 },
+                    },
+                  ),
+                  Padding(
+                    padding: [4.0, 0.0, 0.0, 12.0],
+                    child: Text(text: "°C", style: {fontFamily: "IBMPlexMono", fontWeight: "w700", fontSize: 40.0, color: 0xFF6E7681}),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      Text(
+        text: ["ALVO ", data.st.alvo, "°C  ", data.st.subfase],
+        style: {fontFamily: "IBMPlexMono", fontWeight: "w600", fontSize: 14.0, color: 0xFFF0A500},
+      ),
+      SizedBox(height: 12.0),
+      Container(
+        height: 10.0,
+        decoration: {type: "box", color: 0xFF1F2123, borderRadius: [{x: 5.0}]},
+        child: FractionallySizedBox(
+          alignment: {x: -1.0, y: 0.0},
+          widthFactor: data.st.progresso,
+          heightFactor: 1.0,
+          child: Container(
+            decoration: {
+              type: "box",
+              color: 0xFFF0A500,
+              borderRadius: [{x: 5.0}],
+              boxShadow: [{color: 0x96F0A500, blurRadius: 12.0}],
+            },
+          ),
+        ),
+      ),
+      SizedBox(height: 8.0),
+      Mono(texto: ["ETAPA ", data.st.progressoPct, " · ", data.st.progressoTotal, " DA BRASSAGEM"], tamanho: 12.0, espaco: 2.0, cor: 0xFF6E7681),
+    ],
+  ),
+);
+
+widget Direita = Column(
+  crossAxisAlignment: "stretch",
+  children: [
+    Toque(
+      onTap: event "ajustes" {},
+      child: Container(
+        padding: [20.0, 16.0, 20.0, 16.0],
+        decoration: {type: "box", border: [{style: "none"}, {style: "none"}, {style: "none"}, {color: 0xFF2A2A2A, width: 1.0}]},
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Mono(texto: switch data.st.pausa { true: "PAUSADO", default: "RESTANTE" }, tamanho: 12.0, espaco: 2.0,
+                 cor: switch data.st.pausa { true: 0xFFF0A500, default: 0xFF6E7681 }),
+            SizedBox(height: 4.0),
+            FittedBox(
+              fit: "scaleDown",
+              alignment: {x: -1.0, y: 0.0},
+              child: Text(
+                text: data.st.timer,
+                style: {fontFamily: "IBMPlexMono", fontWeight: "w700", fontSize: 64.0, letterSpacing: -2.0, height: 1.0,
+                        color: switch data.st.pausa { true: 0x96F0A500, default: 0xFFF0A500 }},
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    Container(
+      padding: [20.0, 12.0, 20.0, 12.0],
+      decoration: {type: "box", border: [{style: "none"}, {style: "none"}, {style: "none"}, {color: 0xFF2A2A2A, width: 1.0}]},
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: [
+          ...for s in data.sinais:
+            Tag(texto: s.texto, tipo: s.tipo),
+        ],
+      ),
+    ),
+    Expanded(
+      child: ListView(
+        padding: [20.0, 12.0, 20.0, 8.0],
+        children: [
+          Mono(texto: "ETAPAS", tamanho: 12.0, espaco: 2.0, cor: 0xFF6E7681),
+          ...for e in data.etapas:
+            Padding(
+              padding: [0.0, 6.0, 0.0, 0.0],
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      text: e.texto,
+                      maxLines: 1,
+                      overflow: "ellipsis",
+                      style: {fontFamily: "IBMPlexSans", fontSize: 13.0,
+                              color: switch e.estado { "feita": 0xFF6E7681, default: 0xFFE6EDF3 }},
+                    ),
+                  ),
+                  Text(
+                    text: e.valor,
+                    style: {fontFamily: "IBMPlexSans", fontWeight: "w700", fontSize: 13.0,
+                            color: switch e.estado { "agora": 0xFFF0A500, "feita": 0xFF6E7681, default: 0xFFE6EDF3 }},
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    ),
+  ],
+);
+
+widget root = Container(
+  color: 0xFF0E0E0E,
+  child: Column(
+    children: [
+      Expanded(
+        child: Row(
+          crossAxisAlignment: "stretch",
+          children: [
+            Expanded(flex: 115, child: Esquerda()),
+            Container(width: 1.0, color: 0xFF2A2A2A),
+            Expanded(flex: 100, child: Direita()),
+          ],
+        ),
+      ),
+      Container(
+        decoration: {type: "box", border: [{style: "none"}, {color: 0xFF2A2A2A, width: 1.0}, {style: "none"}, {style: "none"}]},
+        child: Row(
+          children: [
+            BotaoGrande(rotulo: switch data.st.pausa { true: "CONTINUAR", default: "PAUSAR" },
+                        cor: switch data.st.pausa { true: 0xFF3FB950, default: 0xFFE6EDF3 },
+                        onTap: event "pausar" {}),
+            BotaoGrande(rotulo: "+5 MIN", cor: 0xFFF0A500, onTap: event "mais5" {}),
+            BotaoGrande(rotulo: "PULAR", cor: 0xFFE6EDF3, onTap: event "pular" {}),
+            BotaoGrande(rotulo: "CANCELAR", cor: 0xFFF85149, onTap: event "cancelar" {}),
+          ],
+        ),
+      ),
+    ],
+  ),
+);
