@@ -1,0 +1,313 @@
+// =====================================================================
+//  Tema JC — tela Ao vivo  (formato .jctema / rfw)
+//
+//  Este arquivo descreve a tela inteira. Pode mudar tudo: posição,
+//  tamanhos, cores, fontes, o que aparece e o que some. Os dados vêm
+//  prontos em data.* e os botões mandam eventos (event "nome" {}).
+//  Contrato completo: painel/CONTRATO/jctema.md
+// =====================================================================
+
+import core.widgets;
+import jc.pecas;
+
+// ---------- peças do tema ----------
+
+widget Cartao = Container(
+  padding: [14.0, 12.0, 14.0, 12.0],
+  decoration: {
+    type: "box",
+    color: data.cores.cartao,
+    borderRadius: [{x: 16.0}],
+    border: [{color: data.cores.borda, width: 1.0}],
+  },
+  child: args.child,
+);
+
+widget Rotulo = Text(
+  text: args.texto,
+  style: {fontFamily: "BebasNeue", fontSize: 15.0, letterSpacing: 1.0, color: data.cores.apagado},
+);
+
+widget Marca = Container(
+  width: 11.0,
+  height: 11.0,
+  decoration: {
+    type: "box",
+    shape: "circle",
+    color: switch args.estado { "feita": data.cores.ok, "agora": data.cores.destaque, default: 0x00000000 },
+    border: [{color: switch args.estado { "feita": data.cores.ok, "agora": data.cores.destaque, default: data.cores.apagado }, width: 2.0}],
+  },
+);
+
+widget Linha = Padding(
+  padding: [0.0, 7.0, 0.0, 7.0],
+  child: Row(
+    children: [
+      SizedBox(width: 20.0, child: Center(child: args.marca)),
+      SizedBox(width: 10.0),
+      Expanded(
+        child: Text(
+          text: args.item.texto,
+          maxLines: 1,
+          overflow: "ellipsis",
+          style: {
+            fontFamily: "DMSans",
+            fontSize: 13.5,
+            color: switch args.item.estado { "feita": data.cores.apagado, default: data.cores.texto },
+          },
+        ),
+      ),
+      Text(
+        text: args.item.valor,
+        style: {
+          fontFamily: "DMSans",
+          fontWeight: "w600",
+          fontSize: 13.0,
+          color: switch args.item.estado { "agora": data.cores.destaque, "feita": data.cores.apagado, default: data.cores.texto },
+        },
+      ),
+    ],
+  ),
+);
+
+widget Sinal = Container(
+  padding: [14.0, 8.0, 14.0, 8.0],
+  decoration: {
+    type: "box",
+    borderRadius: [{x: 20.0}],
+    border: [{
+      color: switch args.tipo {
+        "ok": data.cores.ok, "destaque": data.cores.destaque, "aviso": data.cores.aviso,
+        "erro": data.cores.erro, default: data.cores.borda,
+      },
+      width: 1.0,
+    }],
+  },
+  child: Text(
+    text: args.texto,
+    style: {
+      fontFamily: "DMSans",
+      fontWeight: "w600",
+      fontSize: 13.0,
+      color: switch args.tipo {
+        "ok": data.cores.ok, "destaque": data.cores.destaque, "aviso": data.cores.aviso,
+        "erro": data.cores.erro, default: data.cores.apagado,
+      },
+    },
+  ),
+);
+
+widget Botao = Expanded(
+  flex: args.flex,
+  child: Padding(
+    padding: [4.0, 0.0, 4.0, 0.0],
+    child: Toque(
+      onTap: args.onTap,
+      child: Container(
+        height: 52.0,
+        decoration: {
+          type: "box",
+          color: switch args.primario { true: data.cores.destaque, default: data.cores.botao },
+          borderRadius: [{x: 14.0}],
+          border: [{color: switch args.primario { true: data.cores.destaque, default: data.cores.borda }, width: 1.0}],
+        },
+        child: Center(
+          child: Text(
+            text: args.rotulo,
+            maxLines: 1,
+            style: {
+              fontFamily: "DMSans",
+              fontWeight: "w700",
+              fontSize: 14.0,
+              color: switch args.primario { true: data.cores.sobreDestaque, default: data.cores.texto },
+            },
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+
+// ---------- blocos ----------
+
+widget CartaoTempo = BordaProgresso(
+  valor: data.st.progresso,
+  cor: switch data.st.pausa { true: data.cores.destaqueFraco, default: data.cores.destaque },
+  trilha: data.cores.borda,
+  raio: 16.0,
+  largura: 3.0,
+  child: Container(
+    padding: [16.0, 14.0, 16.0, 12.0],
+    decoration: {type: "box", color: data.cores.cartao, borderRadius: [{x: 16.0}]},
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisSize: "min",
+            children: [
+              FittedBox(
+                fit: "scaleDown",
+                child: Text(
+                  text: [data.st.temp, "°"],
+                  style: {
+                    fontFamily: "BebasNeue",
+                    fontSize: 66.0,
+                    height: 1.0,
+                    color: switch data.st.tempOk { true: data.cores.texto, default: data.cores.erro },
+                  },
+                ),
+              ),
+              SizedBox(height: 2.0),
+              Text(
+                text: ["alvo ", data.st.alvo, "° ", data.st.subfase],
+                maxLines: 1,
+                overflow: "ellipsis",
+                style: {fontFamily: "DMSans", fontSize: 12.0, color: data.cores.apagado},
+              ),
+            ],
+          ),
+        ),
+        Container(width: 1.0, height: 70.0, color: data.cores.borda),
+        Expanded(
+          child: Column(
+            mainAxisSize: "min",
+            children: [
+              FittedBox(
+                fit: "scaleDown",
+                child: Text(
+                  text: data.st.timer,
+                  style: {fontFamily: "BebasNeue", fontSize: 66.0, height: 1.0, color: data.cores.destaque},
+                ),
+              ),
+              SizedBox(height: 2.0),
+              Text(
+                text: data.st.etapa,
+                maxLines: 1,
+                overflow: "ellipsis",
+                style: {fontFamily: "DMSans", fontSize: 12.0, color: data.cores.apagado},
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+);
+
+widget CartaoGrafico = Cartao(
+  child: Column(
+    crossAxisAlignment: "stretch",
+    children: [
+      Rotulo(texto: "TEMPERATURA"),
+      SizedBox(height: 6.0),
+      Expanded(
+        child: Grafico(linha: data.cores.destaque, grade: data.cores.borda, texto: data.cores.apagado),
+      ),
+    ],
+  ),
+);
+
+widget CartaoEtapas = Cartao(
+  child: Column(
+    crossAxisAlignment: "stretch",
+    children: [
+      Rotulo(texto: "ETAPAS"),
+      ...for e in data.etapas:
+        Linha(item: e, marca: Marca(estado: e.estado)),
+    ],
+  ),
+);
+
+widget CartaoLupulos = Padding(
+  padding: [0.0, 10.0, 0.0, 0.0],
+  child: Cartao(
+    child: Column(
+      crossAxisAlignment: "stretch",
+      children: [
+        Rotulo(texto: "LÚPULOS"),
+        ...for l in data.lupulos:
+          Linha(item: l, marca: Icone(nome: "lupulo", tamanho: 18.0)),
+      ],
+    ),
+  ),
+);
+
+widget Sinais = Padding(
+  padding: [0.0, 10.0, 0.0, 0.0],
+  child: Wrap(
+    spacing: 8.0,
+    runSpacing: 8.0,
+    children: [
+      ...for s in data.sinais:
+        Sinal(texto: s.texto, tipo: s.tipo),
+    ],
+  ),
+);
+
+widget Rodape = Container(
+  padding: [10.0, 8.0, 10.0, 8.0],
+  decoration: {
+    type: "box",
+    color: data.cores.barra,
+    border: [{style: "none"}, {color: data.cores.borda, width: 1.0}, {style: "none"}, {style: "none"}],
+  },
+  child: Row(
+    children: [
+      Botao(flex: 6, rotulo: "−5", onTap: event "menos5" {}),
+      Botao(flex: 8, rotulo: "Tempo", onTap: event "tempo" {}),
+      Botao(flex: 6, rotulo: "+5", onTap: event "mais5" {}),
+      Botao(
+        flex: 11,
+        primario: true,
+        rotulo: switch data.st.pausa { true: "CONTINUAR", default: "PAUSAR" },
+        onTap: event "pausar" {},
+      ),
+      Botao(flex: 11, rotulo: "REINICIAR", onTap: event "reiniciar" {}),
+      Botao(flex: 9, rotulo: "PULAR", onTap: event "pular" {}),
+      Botao(flex: 5, rotulo: "⋯", onTap: event "ajustes" {}),
+    ],
+  ),
+);
+
+// ---------- a tela ----------
+
+widget root = Column(
+  children: [
+    Expanded(
+      child: Padding(
+        padding: [14.0, 12.0, 14.0, 10.0],
+        child: Row(
+          crossAxisAlignment: "stretch",
+          children: [
+            Expanded(
+              flex: 115,
+              child: Column(
+                crossAxisAlignment: "stretch",
+                children: [
+                  CartaoTempo(),
+                  SizedBox(height: 10.0),
+                  Expanded(child: CartaoGrafico()),
+                ],
+              ),
+            ),
+            SizedBox(width: 12.0),
+            Expanded(
+              flex: 100,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: "stretch",
+                  children: [
+                    CartaoEtapas(),
+                    switch data.tem.lupulos { true: CartaoLupulos(), default: SizedBox() },
+                    Sinais(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    Rodape(),
+  ],
+);
