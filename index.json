@@ -1,0 +1,30 @@
+{
+  "formato": 1,
+  "atualizado": "2026-10-09",
+  "temas": [
+    {
+      "id": "jc",
+      "nome": "JC",
+      "autor": "José Cervas",
+      "versao": "1.0.0",
+      "painelMinimo": "0.3.0",
+      "descricao": "O tema padrão: a cara do JC App, preto e âmbar.",
+      "telas": {
+        "ao_vivo": { "arquivo": "temas/jc/ao_vivo.rfwtxt", "sha256": "33ee33c11e20af4fba250ab5610049a94996c7a2dff2685beddbba7d48af5440" }
+      },
+      "previa": "temas/jc/previa.png"
+    },
+    {
+      "id": "classico",
+      "nome": "Clássico",
+      "autor": "José Cervas",
+      "versao": "1.0.0",
+      "painelMinimo": "0.3.0",
+      "descricao": "O visual da primeira versão do painel.",
+      "telas": {
+        "ao_vivo": { "arquivo": "temas/classico/ao_vivo.rfwtxt", "sha256": "cec889c20ace011826ed7671f8c999e185ad6822ea0e25f50780d962e816ecb8" }
+      },
+      "previa": "temas/classico/previa.png"
+    }
+  ]
+}
